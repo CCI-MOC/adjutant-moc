@@ -1,0 +1,17 @@
+.idea/
+tox/
+vscode/
+.moc/
+.pytest_cache/
+playbooks/
+openshift/
+.venv/
+api-ref/
+doc/
+tools/
+reg_log.log
+.travis-ci/
+python_adjutant.egg-info/
+adjutant.log
+docker-compose.yaml
+conf/
