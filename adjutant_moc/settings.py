@@ -12,9 +12,11 @@
 
 import sys
 
+
 import confspirator
 from confspirator import groups as config_groups
 from confspirator import fields as config_fields
+import yaml
 
 
 TESTING = sys.argv[1:2] == ['test']
@@ -26,4 +28,11 @@ services = config_fields.DictConfig(
                            'url': 'https://example.com'}})
 moc.register_child_config(services)
 
-MOC_CONF = confspirator.load(moc, None)
+conf_dict = None
+try:
+    with open('/etc/adjutant/services.yaml', 'r') as f:
+        conf_dict = yaml.FullLoader(f)
+except FileNotFoundError:
+    pass
+
+MOC_CONF = confspirator.load(moc, conf_dict)
