@@ -1,0 +1,4 @@
+services:
+  staging-openshift:
+    type: openshift
+    url: https://acct-mgt-acct-mgt.s-apps.osh.massopen.cloud

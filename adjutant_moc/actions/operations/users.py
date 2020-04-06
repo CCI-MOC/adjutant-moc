@@ -19,34 +19,34 @@ class AddUserToProjectOperation(Operation):
 
         self.user_ref = user_ref
         self.project_ref = project_ref
-        self.roles = roles
+        self.role_names = roles
 
         self.user = None
         self.project = None
         self.services = services
-        self.completed_services = None
 
-    def perform(self):
+    def perform(self, cache):
         self.project = self.identity.find_project(
             self.project_ref['name'], self.project_ref['domain_id'])
+        self.roles = [self.identity.find_role(r) for r in self.role_names]
         self.user = self.identity.find_user(
             self.user_ref['username'], self.user_ref['user_domain_id'])
         for role in self.roles:
             self.identity.add_user_role(self.user, role, self.project)
 
-    def replicate(self, service):
+    def replicate(self, service, cache):
         for service in self.services:
             # Currently, the microservice doesn't throw a bad request if the
             # user already exists.
             self.get_driver(service).create_user(self.user_ref['username'])
-            for role in self.roles:
-                self.get_driver(service).add_role(
+            for role in self.role_names:
+                r = self.get_driver(service).add_role(
                     self.user_ref['username'], self.project.id, role)
             self.completed_services.append(service)
 
-    def rollback(self):
+    def rollback(self, cache):
         for service in self.completed_services:
-            for role in self.roles:
+            for role in self.role_names:
                 self.get_driver(service).delete_role(
                     self.user_ref['username'], self.project.id, role)
 

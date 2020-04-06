@@ -55,8 +55,13 @@ class MocProjects(base.MocBaseApi):
         request.data['setup_network'] = self.config['create_default_network']
         request.data['domain_id'] = self.config['project_domain_id']
 
+        if 'project_name' not in request.data:
+            message = 'Missing project_name in request.'
+            self.logger.info(message)
+            return self.response(message, 400)
+
         project = self.identity.find_project(
-            request.data['project_name'], 'default')
+            request.data['project_name'], self.config.project_domain_id)
         if project:
             message = ('Project %s already exists.'
                        % request.data['project_name'])

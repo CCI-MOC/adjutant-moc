@@ -18,8 +18,8 @@ class MocCreateProject(base.BaseTask):
     duplicate_policy = 'block'
     task_type = 'moc_create_project'
     default_actions = [
-        'MocNewProjectAction', 'MailingListSubscribeAction',
-        'NewProjectDefaultNetworkAction', 'SetProjectQuotaAction']
+        'MocNewProjectAction', 'NewProjectDefaultNetworkAction',
+        'SetProjectQuotaAction']
 
 
 class MocInviteUser(base.BaseTask):

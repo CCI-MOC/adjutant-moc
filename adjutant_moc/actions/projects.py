@@ -10,6 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from adjutant.common import user_store
+from adjutant.actions.v1 import resources as resource_actions
 from confspirator import groups as config_groups
 from confspirator import fields as config_fields
 
@@ -84,3 +86,6 @@ class MocNewProjectAction(base.MocBaseAction):
             self.services, project_ref))
         self.approve_journal.append(operations.AddUserToProjectOperation(
             self.services, user_ref, project_ref, self.config.default_roles))
+
+    def write_to_submit_journal(self, token_data):
+        pass

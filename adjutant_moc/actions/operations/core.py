@@ -23,6 +23,7 @@ for k, v in settings.MOC_CONF['services'].items():
 class Operation(object):
     def __init__(self):
         self.log = []
+        self.completed_services = []
 
     @property
     def identity(self):
@@ -32,21 +33,21 @@ class Operation(object):
     def get_driver(service):
         return SERVICES[service]  # type: services.Service
 
-    def commit(self):
+    def commit(self, cache):
         try:
-            self.perform()
+            self.perform(cache)
             for service in self.services:
-                self.replicate(self.get_driver(service))
+                self.replicate(service, cache)
         except Exception as e:
             self.log.append('Error: %s' % str(e))
-            self.rollback()
+            self.rollback(cache)
             raise e
 
-    def perform(self):
+    def perform(self, cache):
         raise NotImplementedError
 
-    def replicate(self, driver: services.Service):
+    def replicate(self, driver: services.Service, cache):
         raise NotImplementedError
 
-    def rollback(self):
+    def rollback(self, cache):
         raise NotImplementedError

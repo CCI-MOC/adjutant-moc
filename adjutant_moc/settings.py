@@ -31,8 +31,8 @@ moc.register_child_config(services)
 conf_dict = None
 try:
     with open('/etc/adjutant/services.yaml', 'r') as f:
-        conf_dict = yaml.FullLoader(f)
+        conf_dict = yaml.load(f, Loader=yaml.FullLoader)
 except FileNotFoundError:
     pass
 
-MOC_CONF = confspirator.load(moc, conf_dict)
+MOC_CONF = confspirator.load(moc, {'moc': conf_dict})

@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  adjutant-moc:
+    container_name: adjutant-moc
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: massopencloud/adjutant-moc:0.2b
+    environment:
+      DB_HOST: adjutant-db
+    ports:
+      - "8081:8080"  # host:container
+    volumes:
+      - "./conf:/etc/adjutant"
+      - "./ssh:/.ssh"
+
+  adjutant-db:
+    image: mariadb:latest
+    restart: always
+    container_name: mariadb
+    environment:
+      MYSQL_DATABASE: adjutant
+      MYSQL_USER: adjutant
+      MYSQL_PASSWORD: dbpassword
+      MYSQL_ROOT_PASSWORD: dbrootpassword
+    expose:
+      - "3306"
+
+  smtp:
+    container_name: maildev
+    image: maildev/maildev:latest
+    environment:
+      MAILDEV_INCOMING_USER: adjutant
+      MAILDEV_INCOMING_PASS: smtppassword
+    ports:
+      - "1080:80"
+      - "1025:25"

@@ -17,6 +17,11 @@ from adjutant import exceptions as adjutant_exceptions
 
 
 class Service(object):
+    role_mapping = {
+        'project_admin': 'admin',
+        'member': 'member',
+    }
+
     def __init__(self, url):
         self.url = url.rstrip("/")
         self.session = requests.session()
@@ -64,22 +69,22 @@ class Service(object):
 
     def add_role(self, username, project_id, role):
         # /users/<user_name>/projects/<project_name>/roles/<role>
-        url = "%s/users/%s/projects/%s/roles/%s" % (self.url, username,
-                                                    project_id, role)
+        url = "%s/users/%s/projects/%s/roles/%s" % (
+            self.url, username, project_id, self.role_mapping[role])
         r = self.session.put(url)
         self.check_response(r)
         return r
 
     def get_role(self, username, project_id, role):
-        url = "%s/users/%s/projects/%s/roles/%s" % (self.url, username,
-                                                    project_id, role)
+        url = "%s/users/%s/projects/%s/roles/%s" % (
+            self.url, username, project_id, self.role_mapping[role])
         r = self.session.get(url)
         self.check_response(r)
         return r
 
     def delete_role(self, username, project_id, role):
-        url = "%s/users/%s/projects/%s/roles/%s" % (self.url, username,
-                                                    project_id, role)
+        url = "%s/users/%s/projects/%s/roles/%s" % (
+            self.url, username, project_id, self.role_mapping[role])
         r = self.session.delete(url)
         self.check_response(r)
         return r

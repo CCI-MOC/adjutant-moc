@@ -3,7 +3,7 @@ tox/
 vscode/
 .moc/
 .pytest_cache/
-playbooks/
+tools/
 openshift/
 .venv/
 api-ref/

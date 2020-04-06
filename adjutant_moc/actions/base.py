@@ -28,20 +28,24 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
 
     def _validate(self):
         """Cycles through all the required attributes and validates them."""
+        all_valid = True
         for data in self.required:
             try:
                 valid = self.__getattribute__('validate_%s' % data)()
                 self.add_note('%s is %s' % (data, str(valid)))
                 if not valid:
-                    self.action.valid = False
-                    return False
+                    all_valid = False
             except AttributeError:
                 # No validation needed for this attribute
                 continue
 
-        self.add_note('All required data is valid.')
-        self.action.valid = True
-        return True
+        if not all_valid:
+            self.action.valid = False
+        else:
+            self.add_note('All required data is valid.')
+            self.action.valid = True
+        self.action.save()
+        return all_valid
 
     def _get_user(self):
         return self.action.task.keystone_user
@@ -78,9 +82,14 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
         # TODO: Make running the journal a separate function that
         # acce
         performed = []
+        cache = {}
         try:
             for op in self.approve_journal:
-                op.commit()
+                # Commit the operation, and update the cache
+                # and logs
+                op.commit(cache)
+                for k, v in cache.items():
+                    self.set_cache(k, v)
                 self.add_note('executed: %s' % str(type(op)))
                 for log in op.log:
                     self.add_note(log)
@@ -88,7 +97,7 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
         except Exception as e:
             self.add_note('Exception!: %s' % str(e))
             for op in reversed(performed):
-                op.rollback()
+                op.rollback(cache)
                 for log in op.log:
                     self.add_note(log)
             raise e
@@ -108,17 +117,20 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
                                                  in self.approve_journal]))
 
         performed = []
+        cache = {}
         try:
             for op in self.submit_journal:
-                op.commit()
+                op.commit(cache)
                 self.add_note('executed: %s' % str(type(op)))
+                for k, v in cache.items():
+                    self.set_cache(k, v)
                 for log in op.log:
                     self.add_note(log)
                 performed.append(op)
         except Exception as e:
             self.add_note('Exception!: %s' % str(e))
             for op in reversed(performed):
-                op.rollback()
+                op.rollback(cache)
                 for log in op.log:
                     self.add_note(log)
             raise e

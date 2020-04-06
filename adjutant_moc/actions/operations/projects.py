@@ -21,27 +21,28 @@ class CreateProjectOperation(Operation):
         super().__init__()
         self.project_ref = project_ref
         self.services = services
-        self.completed_services = []
         self.project = None
 
-    def perform(self):
+    def perform(self, cache):
         self.project = self.identity.create_project(
             project_name=self.project_ref['name'],
             domain=self.project_ref['domain_id'],
             created_on=timezone.now(),
             description=self.project_ref['description']
         )
+        cache['project_id'] = self.project.id
         self.log.append(
             'Project %s created on leader.' % str(self.project_ref))
 
-    def replicate(self, service):
-        self.get_driver(service).create_project(self.project.id)
+    def replicate(self, service, cache):
+        self.get_driver(service).create_project(self.project.id,
+                                                self.project_ref['name'])
         self.project.add_tag('service:%s' % service)
         self.log.append('Project %s created on %s' % (str(self.project_ref),
                                                       service))
         self.completed_services.append(service)
 
-    def rollback(self):
+    def rollback(self, cache):
         if not self.project:
             self.log.append(
                 'Leader project not created, nothing to rollback.')
