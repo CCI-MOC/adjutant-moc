@@ -40,7 +40,7 @@ class AddUserToProjectOperation(Operation):
             # user already exists.
             self.get_driver(service).create_user(self.user_ref['username'])
             for role in self.role_names:
-                r = self.get_driver(service).add_role(
+                self.get_driver(service).add_role(
                     self.user_ref['username'], self.project.id, role)
             self.completed_services.append(service)
 

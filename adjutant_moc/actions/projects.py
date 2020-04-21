@@ -10,8 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from adjutant.common import user_store
-from adjutant.actions.v1 import resources as resource_actions
 from confspirator import groups as config_groups
 from confspirator import fields as config_fields
 

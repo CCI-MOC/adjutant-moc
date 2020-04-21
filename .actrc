@@ -1,0 +1,9 @@
+# Act is a local runner for GitHub actions
+# https://github.com/nektos/act#runners
+-P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+
+# Notes
+# There are certain differences between real GitHub and Act
+# 1. GITHUB_WORKSPACE is /github/workspace in Act
+#                        /home/runner/work in GitHub
+# 2. Act will generally allow admin operations without sudo.
