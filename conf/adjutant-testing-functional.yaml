@@ -1,0 +1,262 @@
+django:
+  secret_key: Do not ever use this awful secret in prod!!!!
+  debug: False
+  allowed_hosts:
+    - '*'
+  databases:
+    default:
+      ENGINE: django.db.backends.sqlite3
+
+  log_file: adjutant.log
+  email:
+    email_backend: django.core.mail.backends.console.EmailBackend
+
+identity:
+  token_cache_time: -1
+  can_edit_users: True
+  username_is_email: True
+  # Dict
+  # A mapping from held role to roles it is allowed to manage.
+  role_mapping:
+    admin:
+    - project_admin
+    - member
+    project_admin:
+    - project_admin
+    - member
+  auth:
+    username: admin
+    password: nomoresecret
+    project_name: admin
+    project_domain_id: default
+    user_domain_id: default
+    auth_url: http://adjutant-devstack/identity/v3
+
+api:
+  active_delegate_apis:
+    - MocProjects
+    - MocUsers
+    - MocAcceptInvite
+    - MocUsersDetail
+  delegate_apis:
+    MocProjects:
+      create_default_network: False
+      region: RegionOne
+      project_domain_id: default
+    MocUsers:
+      # List
+      # Users with any of these roles will be hidden from the user list.
+      blacklisted_roles:
+        - admin
+    MocUsersDetail:
+      # List
+      # User with these roles will return not found.
+      blacklisted_roles:
+        - admin
+
+workflow:
+  horizon_url: http://localhost/
+  default_token_expiry: 86400
+  task_defaults:
+    emails:
+      initial:
+        # String
+        # Default email subject for this stage
+        subject: Task Confirmation
+        # String
+        # Default from email for this stage
+        from: bounce+%(task_uuid)s@example.com
+        # String
+        # Default reply-to email for this stage
+        reply: no-reply@example.com
+        # String
+        # Default email template for this stage
+        template: initial.txt
+        # String
+        # Default email html template for this stage
+        # html_template: <your_value>
+      token:
+        # String
+        # Default email subject for this stage
+        subject: Task Token
+        # String
+        # Default from email for this stage
+        from: bounce+%(task_uuid)s@example.com
+        # String
+        # Default reply-to email for this stage
+        reply: no-reply@example.com
+        # String
+        # Default email template for this stage
+        template: token.txt
+        # String
+        # Default email html template for this stage
+        # html_template: <your_value>
+      completed:
+        # String
+        # Default email subject for this stage
+        subject: Task Completed
+        # String
+        # Default from email for this stage
+        from: bounce+%(task_uuid)s@example.com
+        # String
+        # Default reply-to email for this stage
+        reply: no-reply@example.com
+        # String
+        # Default email template for this stage
+        template: completed.txt
+        # String
+        # Default email html template for this stage
+        # html_template: <your_value>
+    notifications:
+      error_handler_config:
+        EmailNotification:
+          emails:
+            - onboarding@lists.massopen.cloud
+          reply: onboarding@massopen.cloud
+      error_handlers:
+        - EmailNotification
+      standard_handler_config:
+        EmailNotification:
+          emails:
+            - onboarding@lists.massopen.cloud
+          reply: onboarding@massopen.cloud
+      standard_handlers:
+        - EmailNotification
+      safe_errors:
+        - SMTPException
+  action_defaults:
+    MailingListSubscribeAction:
+      private_key: /.ssh/id_rsa
+      host: mail.massopen.cloud
+      port: 25
+      user: moc-tools
+      list: kaizen-users
+    MocNewProjectAction:
+      default_roles:
+        - member
+        - project_admin
+      project_domain_id: default
+      enabled_services:
+        - staging-openshift
+    MocInviteUserAction:
+      user_domain_id: default
+    NewProjectDefaultNetworkAction:
+      moc-kzn:
+        # This is the default network created upon approval of a project.
+        network_name: default_network
+        subnet_name: default_subnet
+        router_name: default_router
+        public_network: 07ee01f5-fc4e-4bac-86c7-ddaa3dfb9fe1
+        DNS_NAMESERVERS:
+          - 128.31.24.11
+          - 128.31.24.12
+        SUBNET_CIDR: 10.0.0.0/24
+    SetProjectQuotaAction:
+      # Float
+      # Precentage different allowed when matching quota sizes.
+      size_difference_threshold: 0.1
+      # Integer
+      # The allowed number of days between auto approved quota changes.
+      days_between_autoapprove: 30
+      # Dict
+      # Which quota size to use for which region.
+      region_sizes:
+        RegionOne: small
+
+  tasks:
+
+quota:
+  # Dict
+  # A definition of the quota size groups that Adjutant should use.
+  sizes:
+    small:
+      nova:
+        instances: 10
+        cores: 50
+        ram: 65536
+        metadata_items: 128
+        injected_files: 5
+        injected_file_content_bytes: 10240
+        key_pairs: 50
+        floating_ips: 2
+        fixed_ips: 0
+        security_groups: 20
+        security_group_rules: 100
+      cinder:
+        gigabytes: 500
+        snapshots: 50
+        volumes: 20
+      neutron:
+        floatingip: 2
+        network: 5
+        port: 50
+        router: 3
+        security_group: 20
+        security_group_rule: 100
+        subnet: 10
+
+    medium:
+      nova:
+        instances: 30
+        cores: 200
+        ram: 262144
+        metadata_items: 128
+        injected_files: 5
+        injected_file_content_bytes: 10240
+        key_pairs: 50
+        floating_ips: 5
+        fixed_ips: 0
+        security_groups: 50
+        security_group_rules: 200
+      cinder:
+        gigabytes: 1000
+        snapshots: 100
+        volumes: 50
+      neutron:
+        floatingip: 5
+        network: 10
+        port: 150
+        router: 5
+        security_group: 50
+        security_group_rule: 200
+        subnet: 20
+
+    large:
+      nova:
+        instances: 100
+        cores: 500
+        ram: 786432
+        metadata_items: 128
+        injected_files: 5
+        injected_file_content_bytes: 10240
+        key_pairs: 50
+        floating_ips: 10
+        fixed_ips: 0
+        security_groups: 100
+        security_group_rules: 500
+      cinder:
+        gigabytes: 2000
+        snapshots: 200
+        volumes: 100
+      neutron:
+        floatingip: 10
+        network: 20
+        port: 300
+        router: 10
+        security_group: 100
+        security_group_rule: 400
+        subnet: 40
+  # List
+  # An ascending list of all the quota size names, so that Adjutant knows their relative sizes/order.
+  sizes_ascending:
+    - small
+    - medium
+    - large
+  # Dict
+  # A per region definition of what services Adjutant should manage quotas for. '*' means all or default region.
+  services:
+    '*':
+    - cinder
+    - neutron
+    - nova
+

@@ -31,7 +31,7 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings.
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=79 --statistics
-      - name: Test
+      - name: Run unit tests
         run: |
           export ADJUTANT_CONFIG_FILE="$GITHUB_WORKSPACE/conf/adjutant-testing-unit.yaml"
-          pipenv run adjutant-api test
+          pipenv run adjutant-api test adjutant_moc.tests.unit
