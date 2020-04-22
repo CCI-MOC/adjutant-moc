@@ -62,7 +62,7 @@ class Service(object):
         return r
 
     def delete_user(self, username):
-        url = "%s/projects/%s" % (self.url, username)
+        url = "%s/users/%s" % (self.url, username)
         r = self.session.delete(url)
         self.check_response(r)
         return r
