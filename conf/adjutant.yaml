@@ -15,12 +15,8 @@ django:
   log_file: /etc/adjutant/adjutant.log
   email:
     email_backend: django.core.mail.backends.smtp.EmailBackend
-    email_host: smtp
-    email_port: 1025
-    email_host_user: adjutant
-    email_host_pass: smtppassword
-    use_tls: False
-    use_ssl: False
+    host: smtp
+    port: 25
 
 identity:
   token_cache_time: -1
@@ -64,25 +60,6 @@ api:
       # User with these roles will return not found.
       blacklisted_roles:
         - admin
-
-notifications:
-  handler_defaults:
-    EmailNotification:
-      # List
-      # List of email addresses to send this notification to.
-      # emails:
-      # String
-      # From email for this notification.
-      from: bounce+%(task_uuid)s@example.com
-      # String
-      # Reply-to email for this notification.
-      reply: no-reply@example.com
-      # String
-      # Email template for this notification. No template will cause the email not to send.
-      template: notification.txt
-      # String
-      # Email html template for this notification.
-      # html_template: <your_value>
 
 workflow:
   horizon_url: http://localhost/
@@ -138,22 +115,20 @@ workflow:
         # Default email html template for this stage
         # html_template: <your_value>
     notifications:
-      # List
-      # Handlers to use for standard notifications.
-      standard_handlers:
-        - EmailNotification
-      # List
-      # Handlers to use for error notifications.
+      error_handler_config:
+        EmailNotification:
+          emails:
+            - onboarding@lists.massopen.cloud
+          reply: onboarding@massopen.cloud
       error_handlers:
         - EmailNotification
-      # Dict
-      # Settings for standard notification handlers.
-      # standard_handler_config:
-      # Dict
-      # Settings for error notification handlers.
-      # error_handler_config:
-      # List
-      # Error types which are safe to acknowledge automatically.
+      standard_handler_config:
+        EmailNotification:
+          emails:
+            - onboarding@lists.massopen.cloud
+          reply: onboarding@massopen.cloud
+      standard_handlers:
+        - EmailNotification
       safe_errors:
         - SMTPException
   action_defaults:
@@ -196,6 +171,14 @@ workflow:
         RegionOne: small
 
   tasks:
+    moc_create_project:
+      emails:
+        completed:
+          subject: MOC Project Request Approved
+          html_template: moc_create_project_completed.txt
+        initial:
+          subject: MOC Project Request Received
+          html_template: moc_create_project_initial.txt
 
 quota:
   # Dict

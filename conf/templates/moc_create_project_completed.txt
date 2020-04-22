@@ -1,0 +1,28 @@
+<html>
+    <body>
+        <img src="https://kaizen.massopen.cloud/dashboard/static/themes/moc_theme/images/logo.svg" />
+
+        <h1>Your project request has been approved.</h1>
+
+        <h2>Getting Started</h2>
+
+        <p>The OpenStack dashboard is available at
+            <a href="https://kaizen.massopen.cloud"><strong>kaizen.massopen.cloud</strong></a>.
+        </p>
+
+        <p>If you're new to OpenStack, or need to refresh your knowledge, we have
+            documentation available at
+            <a href="https://docs.massopen.cloud/en/latest/">docs.massopen.cloud</a>.
+            Click <a href="https://docs.massopen.cloud/en/latest/openstack/OpenStack-Tutorial-Index.html">here</a>
+            to go directly to the OpenStack tutorials page.
+        </p>
+
+        <p>The OpenShift dashboard is available at
+            <a href="https://k-openshift.osh.massopen.cloud:8443"><strong>kaizen.massopen.cloud</strong></a>.
+        </p>
+
+        <p>Thank you,<br/>
+           Mass Open Cloud Team
+        </p>
+    </body>
+</html>

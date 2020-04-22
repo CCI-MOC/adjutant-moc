@@ -1,0 +1,13 @@
+<html>
+    <body>
+        <img src="https://kaizen.massopen.cloud/dashboard/static/themes/moc_theme/images/logo.svg" />
+
+        <h1>Your project request has been received.</h1>
+
+        <p>It may take a few days for your project request to be reviewed.</p>
+
+        <p>Thank you,<br/>
+           Mass Open Cloud Team
+        </p>
+    </body>
+</html>
