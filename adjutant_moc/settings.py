@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 
 
@@ -20,6 +21,10 @@ import yaml
 
 
 TESTING = sys.argv[1:2] == ['test']
+SERVICES_CONFIG_LOCATION = '/etc/adjutant/services.yaml'
+if os.environ.get('ADJUTANT_SERVICES_FILE'):
+    SERVICES_CONFIG_LOCATION = os.environ.get('ADJUTANT_SERVICES_FILE')
+
 
 moc = config_groups.ConfigGroup("moc")
 services = config_fields.DictConfig(
@@ -30,7 +35,7 @@ moc.register_child_config(services)
 
 conf_dict = None
 try:
-    with open('/etc/adjutant/services.yaml', 'r') as f:
+    with open(SERVICES_CONFIG_LOCATION, 'r') as f:
         conf_dict = yaml.load(f, Loader=yaml.FullLoader)
 except FileNotFoundError:
     pass
