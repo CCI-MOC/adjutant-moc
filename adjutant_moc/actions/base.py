@@ -55,7 +55,7 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
 
     @staticmethod
     def find_services_for_project(project):
-        return [tag.lstrip('service:') for tag in project.list_tags()]
+        return [tag.replace('service:', '') for tag in project.list_tags()]
 
     def set_cache(self, key, value):
         # Not entirely sure why there are two caches. Let's just set both.
