@@ -17,7 +17,7 @@
             to go directly to the OpenStack tutorials page.
         </p>
 
-        <p>The OpenShift dashboard is available at
+        <p>If you also requested an OpenShift project, the OpenShift dashboard is available at
             <a href="https://k-openshift.osh.massopen.cloud:8443"><strong>kaizen.massopen.cloud</strong></a>.
         </p>
 
