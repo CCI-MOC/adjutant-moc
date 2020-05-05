@@ -1,0 +1,108 @@
+---
+- hosts: adjutant
+  become: yes
+
+  tasks:
+    - name: Install packages
+      package: name=epel-release state=present
+
+    - name: Install packages
+      package: name="{{ item }}" state=present
+      with_items:
+        - certbot
+        - docker
+        - docker-compose
+        - httpd
+        - mod_ssl
+        - python-docker-py
+        - git
+        - mariadb-server
+        - MySQL-python
+
+    - name: Create letsencrypt directory
+      file: name=/var/www/letsencrypt/{{ hostname }} state=directory
+
+    - name: Allow Apache to connect to Adjutant
+      seboolean:
+        name: httpd_can_network_relay
+        state: yes
+        persistent: yes
+
+    - name: Configure Adjutant HTTP Proxy
+      template:
+        src: files/adjutant-http.conf
+        dest: /etc/httpd/conf.d/adjutant-http.conf
+      register: httpd_restart_for_http
+
+    - name: Create letsencrypt certificate
+      shell: |
+        systemctl restart httpd && \
+        certbot certonly -n \
+        --webroot -w /var/www/letsencrypt/{{ hostname }} \
+        -m kristi@nikolla.me --agree-tos -d {{ hostname }}
+      args:
+        creates: /etc/letsencrypt/live/{{ hostname }}
+      when: fetch_ssl == "true"
+
+    - name: Configure Adjutant HTTPS Proxy
+      template:
+        src: files/adjutant-https.conf
+        dest: /etc/httpd/conf.d/adjutant-https.conf
+      notify:
+        - httpd_restart
+
+    - name: Start services
+      service: name="{{ item }}" state=started
+      with_items:
+        - docker
+        - httpd
+
+    - name: Ensures /app/adjutant dir exists
+      file: path=/app/adjutant state=directory
+
+    - name: Copy docker-compose.yaml to /app/adjutant
+      template:
+        src: files/docker-compose.yaml
+        dest: /app/adjutant/docker-compose.yaml
+
+    - name: Ensures /app/adjutant/conf dir exists
+      file: path=/app/adjutant/conf state=directory owner=1001
+
+    - name: Copy Adjutant configuration
+      template:
+        src: files/adjutant.yaml
+        dest: /app/adjutant/conf/adjutant.yaml
+        owner: 1001
+
+    - name: Copy Adjutant services configuration
+      template:
+        src: files/services.yaml
+        dest: /app/adjutant/conf/services.yaml
+        owner: 1001
+
+    - name: Copy Adjutant templates
+      copy:
+        src: ../conf/templates
+        dest: /app/adjutant/conf
+        owner: 1001
+
+    - name: Start MariaDB
+      service: name=mariadb state=started
+
+    - name: Create keycloak database
+      mysql_db:
+        name: adjutant
+        state: present
+
+    - name: Create user adjutant and grant permissions
+      mysql_user:
+        name: adjutant
+        host: "{{ mysql_allowed_hosts }}"
+        password: "{{ database_password }}"
+        priv: 'adjutant.*:ALL'
+        state: present
+
+  handlers:
+    - name: httpd_restart
+      service: name=httpd state=restarted
+      become: yes

@@ -15,3 +15,6 @@ python_adjutant.egg-info/
 adjutant.log
 docker-compose.yaml
 conf/
+playbooks/
+ssh/
+.github/
