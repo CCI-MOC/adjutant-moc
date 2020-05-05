@@ -30,9 +30,6 @@ services:
   smtp:
     container_name: maildev
     image: maildev/maildev:latest
-    environment:
-      MAILDEV_INCOMING_USER: adjutant
-      MAILDEV_INCOMING_PASS: smtppassword
     ports:
       - "1080:80"
       - "1025:25"

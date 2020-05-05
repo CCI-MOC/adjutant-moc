@@ -164,6 +164,22 @@ workflow:
         RegionOne: small
 
   tasks:
+    moc_create_project:
+      emails:
+        completed:
+          subject: MOC Project Request Approved
+          html_template: moc_create_project_completed.txt
+        initial:
+          subject: MOC Project Request Received
+          html_template: moc_create_project_initial.txt
+    moc_invite_user:
+      emails:
+        completed:
+          subject: MOC Project Joined Successfully
+          html_template: moc_invite_user_completed.txt
+        token:
+          subject: MOC Project Invitation
+          html_template: moc_invite_user_token.txt
 
 quota:
   # Dict

@@ -2,7 +2,7 @@
     <body>
         <img src="https://kaizen.massopen.cloud/dashboard/static/themes/moc_theme/images/logo.svg" />
 
-        <h1>Your project request has been approved.</h1>
+        <h1><h1>You have successfully joined the project '{{ task.keystone_user.project_name }}'.</h1></h1>
 
         <h2>Getting Started</h2>
 
