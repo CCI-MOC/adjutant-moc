@@ -3,10 +3,9 @@ set -e
 
 cd /app
 
-while ! mysqladmin ping -h $DB_HOST --silent; do
-    >&2 echo "Waiting for database"
-    sleep 1
-done
+>&2 echo "Waiting for database..."
+
+while ! echo exit | nc $DB_HOST 3306; do sleep 5; done
 
 >&2 echo "Database is up - Starting"
 

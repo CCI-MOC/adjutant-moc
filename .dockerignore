@@ -18,3 +18,4 @@ conf/
 playbooks/
 ssh/
 .github/
+.env
