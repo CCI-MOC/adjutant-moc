@@ -1,5 +1,5 @@
 .idea/
-tox/
+.tox/
 vscode/
 .moc/
 .pytest_cache/
@@ -19,3 +19,4 @@ playbooks/
 ssh/
 .github/
 .env
+.git
