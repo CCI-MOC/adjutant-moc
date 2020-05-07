@@ -1,0 +1,5 @@
+git+https://github.com/CCI-MOC/adjutant@fix-migrations#egg=adjutant
+confspirator>=0.1.6<0.2
+paramiko>=2,<3
+pbr>=5,<6
+openstacksdk>0.45<=0.46
