@@ -57,3 +57,26 @@ class ProjectActionTests(base.TestBase):
         self.assertEqual(
             sorted(roles),
             sorted(['member', 'project_admin']))
+
+    def test_new_project_idempotency(self):
+        task = self.new_task(self.users[0])
+        action = projects.MocNewProjectAction(
+            self.demo_data, task=task, order=1)
+
+        action.prepare()
+        self.assertEqual(action.valid, True)
+
+        action.approve()
+        self.assertEqual(action.valid, True)
+
+        project = self.identity.find_project(self.demo_data['project_name'],
+                                             self.default_domain_id)
+        self.assertEqual(project.name, 'test_project')
+
+        roles = self.identity._get_roles_as_names(self.users[0], project)
+        self.assertEqual(
+            sorted(roles),
+            sorted(['member', 'project_admin']))
+
+        action.approve()
+        self.assertEqual(action.valid, True)

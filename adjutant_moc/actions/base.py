@@ -14,6 +14,10 @@ from adjutant.actions.v1 import base
 from adjutant.common import user_store
 
 
+ACTION_STATE_APPROVE_COMPLETED = "approve_completed"
+ACTION_STATE_SUBMIT_COMPLETED = "submit_completed"
+
+
 class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
 
     def __init__(self, *args, **kwargs):
@@ -69,6 +73,11 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
         raise NotImplementedError
 
     def _approve(self):
+        if self.action.state in [ACTION_STATE_APPROVE_COMPLETED,
+                                 ACTION_STATE_SUBMIT_COMPLETED]:
+            self.add_note('Action already completed approve or submit.')
+            return True
+
         self._validate()
 
         if not self.valid:
@@ -102,10 +111,13 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
                     self.add_note(log)
             raise e
 
+        self.action.state = ACTION_STATE_APPROVE_COMPLETED
+        self.action.save()
+
     def _submit(self, token_data):
-        """
-        Nothing to do here. Everything is done at the approve step.
-        """
+        if self.action.state == ACTION_STATE_SUBMIT_COMPLETED:
+            self.add_note("Action already completed submit.")
+            return True
         self._validate()
 
         if not self.valid:
@@ -134,6 +146,9 @@ class MocBaseAction(base.BaseAction, base.ProjectMixin, base.UserMixin):
                 for log in op.log:
                     self.add_note(log)
             raise e
+
+        self.action.state = ACTION_STATE_SUBMIT_COMPLETED
+        self.action.save()
 
     def validate_token(self, token_data):
         pass
