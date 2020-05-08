@@ -3,13 +3,14 @@
   become: yes
 
   tasks:
+    # EPEL is required for Docker-Compose and Certbot
     - name: Install packages
       package: name=epel-release state=present
 
     - name: Install packages
       package: name="{{ item }}" state=present
       with_items:
-        - certbot
+        - certbot  # let's encrypt, could probably install only on fetch_ssl
         - docker
         - docker-compose
         - httpd

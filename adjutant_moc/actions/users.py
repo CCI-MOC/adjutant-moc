@@ -35,6 +35,10 @@ class MocInviteUserAction(base.MocBaseAction):
             sample_default="Default")]
     )
 
+    def _get_email(self):
+        """This is the email where the invitation will be sent."""
+        return self.email
+
     def _prepare(self):
         if not self._validate():
             self.add_note('Validation failed at _prepare')

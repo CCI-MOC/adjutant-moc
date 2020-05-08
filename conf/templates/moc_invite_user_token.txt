@@ -2,12 +2,15 @@
     <body>
         <img src="https://kaizen.massopen.cloud/dashboard/static/themes/moc_theme/images/logo.svg" />
 
-        <p>You have been invited by {{ task.keystone_user.username }} to join the project '{{ task.keystone_user.project_name }}' on Openstack.</p>
+        <p>You have been invited by <b>{{ task.keystone_user.username }}</b> to join the
+        project <b>{{ task.keystone_user.project_name }}</b>.</p>
 
-        <p>Please click on this link to accept the invitation:
+        <p>Please click <b><a href="{{ tokenurl }}{{ token }}">here</a></b> to accept the invitation,
+        or copy the following url<br />
         {{ tokenurl }}{{ token }}</p>
 
-        <p>This link will expire automatically after 24 hours. If expired, you will need to request another one from the person who invited you.</p>
+        <p>This link will expire automatically after 24 hours. If expired, you will need to
+        request another one from the person who invited you.</p>
 
         <p>Thank you,<br/>
             Mass Open Cloud Team
