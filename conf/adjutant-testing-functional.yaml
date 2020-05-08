@@ -35,6 +35,7 @@ identity:
 api:
   active_delegate_apis:
     - MocProjects
+    - MocRoles
     - MocUsers
     - MocAcceptInvite
     - MocUsersDetail

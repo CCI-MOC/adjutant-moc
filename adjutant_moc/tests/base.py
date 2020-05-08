@@ -20,6 +20,9 @@ from django.test import TestCase
 from adjutant_moc.actions import mailing_list
 
 
+
+
+
 class FakeProject(fake_clients.FakeProject):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,6 +45,14 @@ def _role_from_id(instance, role):
         return instance.find_role(role)
 
 
+def fakerole_to_dict(instance):
+    return {
+        'name': instance.name,
+        'id': str(instance.id)
+    }
+fake_clients.FakeRole.to_dict = fakerole_to_dict
+
+
 class TestBase(TestCase):
 
     def setUp(self) -> None:
@@ -57,9 +68,14 @@ class TestBase(TestCase):
         role_patcher = mock.patch(
             'adjutant.common.tests.fake_clients.FakeManager._role_from_id',
             _role_from_id)
+        role_to_dict_patcher = mock.patch(
+            'adjutant.common.tests.fake_clients.FakeRole.to_dict',
+            fakerole_to_dict)
         self.project_patcher = project_patcher.start()
         self.identity_patcher = identity_patcher.start()
         self.role_patcher = role_patcher.start()
+        self.role_to_dict_patcher = role_to_dict_patcher.start()
+        self.addCleanup(role_to_dict_patcher.stop)
         self.addCleanup(role_patcher.stop)
         self.addCleanup(identity_patcher.stop)
         self.addCleanup(project_patcher.stop)

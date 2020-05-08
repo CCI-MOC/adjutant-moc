@@ -34,6 +34,7 @@ class MocOnboardingFeatureSet(feature_set.BaseFeatureSet):
         moc_apis.users.MocUsers,
         moc_apis.users.MocUsersDetail,
         moc_apis.users.MocAcceptInvite,
+        moc_apis.roles.MocRoles,
     ]
 
     notification_handlers = [
