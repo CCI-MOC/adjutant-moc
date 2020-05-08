@@ -29,7 +29,7 @@ class MocUsers(adjutant_apis.UserList):
 
 class MocUsersDetail(adjutant_apis.UserDetail):
     """
-    API Endpoing for interacting with a specific user.
+    API Endpoint for interacting with a specific user.
     """
 
     url = r'^moc/Users/(?P<user_id>\w+)/?$'
