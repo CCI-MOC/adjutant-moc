@@ -33,4 +33,4 @@ jobs:
       - name: Run unit tests
         run: |
           export ADJUTANT_CONFIG_FILE="$GITHUB_WORKSPACE/conf/adjutant-testing-unit.yaml"
-          pipenv run adjutant-api test adjutant_moc.tests.unit
+          adjutant-api test adjutant_moc.tests.unit
