@@ -25,7 +25,7 @@ FROM python:3.7-slim-buster
 LABEL author="Mass Open Cloud <team@lists.massopen.cloud>"
 
 RUN apt update && \
-    apt-get install -y --no-install-recommends netcat python-mysqldb && \
+    apt-get install -y --no-install-recommends netcat libmariadb3 && \
     apt-get clean -y
 
 COPY --from=builder --chown=1001:0 /opt/venv /opt/venv
