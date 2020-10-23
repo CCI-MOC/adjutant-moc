@@ -38,6 +38,11 @@ class FakeProject(fake_clients.FakeProject):
         del(fake_clients.identity_cache["projects"][self.id])
 
 
+class FakeMailman(mailing_list.Mailman):
+    def __enter__(self):
+        return self
+
+
 def _role_from_id(instance, role):
     if isinstance(role, fake_clients.FakeRole):
         return role
@@ -65,25 +70,28 @@ class TestBase(TestCase):
         identity_patcher = mock.patch(
             'adjutant.common.user_store.IdentityManager',
             fake_clients.FakeManager)
+        mailman_patcher = mock.patch(
+            'adjutant_moc.actions.mailing_list.Mailman',
+            FakeMailman
+        )
         role_patcher = mock.patch(
             'adjutant.common.tests.fake_clients.FakeManager._role_from_id',
             _role_from_id)
         role_to_dict_patcher = mock.patch(
             'adjutant.common.tests.fake_clients.FakeRole.to_dict',
             fakerole_to_dict)
+
         self.project_patcher = project_patcher.start()
         self.identity_patcher = identity_patcher.start()
+        self.mailman_patcher = mailman_patcher.start()
         self.role_patcher = role_patcher.start()
         self.role_to_dict_patcher = role_to_dict_patcher.start()
+
         self.addCleanup(role_to_dict_patcher.stop)
         self.addCleanup(role_patcher.stop)
+        self.addCleanup(mailman_patcher.stop)
         self.addCleanup(identity_patcher.stop)
         self.addCleanup(project_patcher.stop)
-
-        mailman_patcher = mock.patch.object(
-            mailing_list.MailingListSubscribeAction, '_mailman')
-        self.mailman_patcher = mailman_patcher.start()
-        self.addCleanup(mailman_patcher.stop)
 
         self.default_domain_id = 'default'
 

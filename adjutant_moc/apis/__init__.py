@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from adjutant_moc.apis import healthcheck  # noqa
 from adjutant_moc.apis import projects  # noqa
 from adjutant_moc.apis import roles  # noqa
 from adjutant_moc.apis import users  # noqa

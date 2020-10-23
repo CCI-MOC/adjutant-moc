@@ -41,6 +41,7 @@ identity:
 
 api:
   active_delegate_apis:
+    - MocHealthCheck
     - MocProjects
     - MocRoles
     - MocUsers
