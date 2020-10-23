@@ -5,7 +5,7 @@
 #   installs netcat and mysql libraries as runtime deps.
 
 # Builder Image
-FROM python:3.7-slim-buster as builder
+FROM python:3.8-slim-buster as builder
 
 RUN apt update && \
     apt-get install -y --no-install-recommends \
@@ -20,7 +20,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt
 
 # Final Image
-FROM python:3.7-slim-buster
+FROM python:3.8-slim-buster
 
 LABEL author="Mass Open Cloud <team@lists.massopen.cloud>"
 
