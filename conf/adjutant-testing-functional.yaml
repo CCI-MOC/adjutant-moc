@@ -26,11 +26,11 @@ identity:
     - member
   auth:
     username: admin
-    password: nomoresecret
+    password: %OPENSTACK_PASSWORD%
     project_name: admin
     project_domain_id: default
     user_domain_id: default
-    auth_url: http://adjutant-devstack/identity/v3
+    auth_url: http://localhost:5000/v3
 
 api:
   active_delegate_apis:
@@ -42,7 +42,7 @@ api:
   delegate_apis:
     MocProjects:
       create_default_network: False
-      region: RegionOne
+      region: microstack
       project_domain_id: default
     MocUsers:
       # List
@@ -162,7 +162,7 @@ workflow:
       # Dict
       # Which quota size to use for which region.
       region_sizes:
-        RegionOne: small
+        microstack: small
 
   tasks:
     moc_create_project:

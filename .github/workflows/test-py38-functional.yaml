@@ -1,0 +1,33 @@
+name: test-py38-functional
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install Adjutant
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Install and Start Microstack
+        run: |
+          sudo snap install microstack --beta --devmode
+          sudo microstack init --auto --control
+          microstack.openstack role create project_admin
+      - name: Run functional Testing
+        run: |
+          export OS_PASSWORD=`sudo snap get microstack config.credentials.keystone-password`
+          sudo cp -r conf /etc/adjutant
+          ./tools/run_functional_tests.sh
