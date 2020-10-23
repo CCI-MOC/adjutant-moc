@@ -4,7 +4,8 @@
 
         <h1>Your project request has been received.</h1>
 
-        <p>It may take a few days for your project request to be reviewed.</p>
+        <p>Please wait until our team reviews it. This may take a few days.
+        You will receive an email when your project request has been approved.</p>
 
         <p>Thank you,<br/>
            Mass Open Cloud Team

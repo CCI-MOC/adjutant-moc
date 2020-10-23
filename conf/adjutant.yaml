@@ -136,7 +136,7 @@ workflow:
     MailingListSubscribeAction:
       private_key: /.ssh/id_rsa
       host: mail.massopen.cloud
-      port: 25
+      port: 22
       user: moc-tools
       list: kaizen-users
     MocNewProjectAction:

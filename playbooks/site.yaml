@@ -19,9 +19,11 @@
         - git
         - mariadb-server
         - MySQL-python
+        - python-pip
 
     - name: Create letsencrypt directory
       file: name=/var/www/letsencrypt/{{ hostname }} state=directory
+      when: fetch_ssl == "True"
 
     - name: Allow Apache to connect to Adjutant
       seboolean:
@@ -34,6 +36,7 @@
         src: files/adjutant-http.conf
         dest: /etc/httpd/conf.d/adjutant-http.conf
       register: httpd_restart_for_http
+      when: fetch_ssl == "True"
 
     - name: Create letsencrypt certificate
       shell: |
@@ -43,12 +46,17 @@
         -m kristi@nikolla.me --agree-tos -d {{ hostname }}
       args:
         creates: /etc/letsencrypt/live/{{ hostname }}
-      when: fetch_ssl == "true"
+      when: fetch_ssl == "True"
 
     - name: Configure Adjutant HTTPS Proxy
       template:
         src: files/adjutant-https.conf
         dest: /etc/httpd/conf.d/adjutant-https.conf
+      notify:
+        - httpd_restart
+
+    - name: Ensure no stale httpd config
+      file: path=/etc/conf.d/adjutant.conf state=absent
       notify:
         - httpd_restart
 
@@ -60,6 +68,9 @@
 
     - name: Ensures /app/adjutant dir exists
       file: path=/app/adjutant state=directory
+
+    - name: Ensure /app/adjutant/docker-compose.yml doesn't exist
+      file: path=/app/adjutant/docker-compose.yml state=absent
 
     - name: Copy docker-compose.yaml to /app/adjutant
       template:
@@ -90,7 +101,7 @@
     - name: Start MariaDB
       service: name=mariadb state=started
 
-    - name: Create keycloak database
+    - name: Create Adjutant database
       mysql_db:
         name: adjutant
         state: present
@@ -102,6 +113,11 @@
         password: "{{ database_password }}"
         priv: 'adjutant.*:ALL'
         state: present
+
+    - name: Restart docker containers
+      shell: "docker-compose pull && docker-compose stop && docker-compose up -d"
+      args:
+        chdir: /app/adjutant
 
   handlers:
     - name: httpd_restart

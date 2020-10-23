@@ -174,6 +174,36 @@ class MocUsersDetail(adjutant_apis.UserDetail):
         # Edit Roles
         pass
 
+    @utils.mod_or_admin
+    def delete(self, request, user_id):
+        # FIXME(knikolla): This function is a copy from base class with
+        # task name updated.
+        id_manager = user_store.IdentityManager()
+        user = id_manager.get_user(user_id)
+        project_id = request.keystone_user["project_id"]
+        # NOTE(dale): For now, we only support cancelling pending invites.
+        if user:
+            return Response(
+                {
+                    "errors": [
+                        "Revoking keystone users not implemented. "
+                        "Try removing all roles instead."
+                    ]
+                },
+                status=501,
+            )
+        project_tasks = models.Task.objects.filter(
+            project_id=project_id,
+            task_type="moc_invite_user",
+            completed=0,
+            cancelled=0,
+        )
+        for task in project_tasks:
+            if task.uuid == user_id:
+                self.task_manager.cancel(task)
+                return Response("Cancelled pending invite task!", status=200)
+        return Response("Not found.", status=404)
+
 
 class MocAcceptInvite(base.MocBaseApi):
 

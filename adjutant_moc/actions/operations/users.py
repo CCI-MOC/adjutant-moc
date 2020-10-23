@@ -25,12 +25,29 @@ class AddUserToProjectOperation(Operation):
         self.project = None
         self.services = services
 
+    def _get_user(self):
+        if self.user_ref.get('user_id'):
+            self.log.append(
+                'User id provided. Getting user by id %s' % self.user_ref['user_id']
+            )
+            self.user = self.identity.get_user(self.user_ref['user_id'])
+            return
+
+        self.log.append(
+            'Looking for username %s in domain %s' % (self.user_ref['username'],
+                                                      self.user_ref['user_domain_id'])
+        )
+        self.user = self.identity.find_user(self.user_ref['username'],
+                                            self.user_ref['user_domain_id'])
+        if not self.user:
+            self.log.append('User not found.')
+
     def perform(self, cache):
         self.project = self.identity.find_project(
             self.project_ref['name'], self.project_ref['domain_id'])
+        self._get_user()
         self.roles = [self.identity.find_role(r) for r in self.role_names]
-        self.user = self.identity.find_user(
-            self.user_ref['username'], self.user_ref['user_domain_id'])
+
         for role in self.roles:
             self.identity.add_user_role(self.user, role, self.project)
 

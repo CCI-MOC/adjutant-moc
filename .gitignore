@@ -1,4 +1,5 @@
 adjutant.log
+playbooks/hosts.production.ini
 
 # Sphinx
 docs/_build

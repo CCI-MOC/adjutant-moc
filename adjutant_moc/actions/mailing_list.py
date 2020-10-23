@@ -46,9 +46,9 @@ class MailingListSubscribeAction(base.MocBaseAction):
             ),
             conf_field.IntConfig(
                 "port",
-                help_text="Mailing list server SMTP port",
-                default=25,
-                sample_default=25,
+                help_text="Mailing list server SSH port",
+                default=22,
+                sample_default=22,
             ),
             conf_field.StrConfig(
                 "user",

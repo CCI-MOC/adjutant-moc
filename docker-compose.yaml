@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: massopencloud/adjutant-moc:0.2b
+    image: massopencloud/adjutant-moc:0.2
     environment:
       DB_HOST: adjutant-db
     ports:

@@ -8,7 +8,6 @@ openshift/
 .venv/
 api-ref/
 doc/
-tools/
 reg_log.log
 .travis-ci/
 python_adjutant.egg-info/

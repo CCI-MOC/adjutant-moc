@@ -29,7 +29,7 @@ class MocProjects(base.MocBaseApi):
         children=[
             config_fields.BoolConfig(
                 'create_default_network',
-                help_text='Always create default network.',
+                help_text='If set to faulse, overrides what is in setup_network.',
                 default=True,
                 sample_default=True,
             ),
@@ -52,8 +52,10 @@ class MocProjects(base.MocBaseApi):
     def post(self, request, format=None):
         request.data['email'] = request.keystone_user['username']
         request.data['region'] = self.config['region']
-        request.data['setup_network'] = self.config['create_default_network']
         request.data['domain_id'] = self.config['project_domain_id']
+
+        if not self.config['create_default_network']:
+            request.data['setup_network'] = False
 
         if 'project_name' not in request.data:
             message = 'Missing project_name in request.'
