@@ -1,3 +1,5 @@
+set -e
+
 export ADJUTANT_CONFIG_FILE=`pwd`/conf/adjutant-testing-unit.yaml
 
 if [ -n "$1" ]; then
