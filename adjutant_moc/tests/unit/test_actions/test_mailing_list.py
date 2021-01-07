@@ -13,12 +13,13 @@
 from unittest import mock
 
 from adjutant.common.tests import fake_clients
+import paramiko
 
 from adjutant_moc.tests import base
 from adjutant_moc.actions import mailing_list
 
 
-class MocTests(base.TestBase):
+class MailingListActionTests(base.TestBase):
 
     data = {'email': 'user0@example.com'}
 
@@ -37,8 +38,8 @@ class MocTests(base.TestBase):
 
         action.prepare()
         with mock.patch.object(
-                mailing_list.MailingListSubscribeAction,
-                '_mailman',
+                mailing_list.Mailman,
+                '_execute',
                 return_value=['blabla@example.com']) as mailman:
             action.approve()
             mailman.assert_has_calls([
@@ -55,14 +56,29 @@ class MocTests(base.TestBase):
 
         action.prepare()
         with mock.patch.object(
-                mailing_list.MailingListSubscribeAction,
-                '_mailman',
+                mailing_list.Mailman,
+                '_execute',
                 return_value=[self.users[0].name]
         ) as mailman:
             action.approve()
             mailman.assert_called_once_with(
                 '/usr/lib/mailman/bin/list_members kaizen-users'
             )
+            self.assertEqual('complete', action.action.state)
+
+        self.assertEqual('complete', action.action.state)
+
+    def test_mailing_list_error_not_blocking(self):
+        task = self.new_task(self.users[0])
+        action = mailing_list.MailingListSubscribeAction(
+            self.data, task=task, order=1)
+
+        action.prepare()
+        with mock.patch.object(
+                mailing_list.Mailman,
+                '__enter__',
+                side_effect=paramiko.ssh_exception.SSHException()):
+            action.approve()
             self.assertEqual('complete', action.action.state)
 
         self.assertEqual('complete', action.action.state)

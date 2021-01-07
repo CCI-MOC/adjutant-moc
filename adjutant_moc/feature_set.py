@@ -30,6 +30,7 @@ class MocOnboardingFeatureSet(feature_set.BaseFeatureSet):
     ]
 
     delegate_apis = [
+        moc_apis.healthcheck.MocHealthCheck,
         moc_apis.projects.MocProjects,
         moc_apis.users.MocUsers,
         moc_apis.users.MocUsersDetail,
