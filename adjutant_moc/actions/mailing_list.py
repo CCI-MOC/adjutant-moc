@@ -114,41 +114,6 @@ class MailingListSubscribeAction(base.MocBaseAction):
         if CONF.identity.username_is_email:
             return self.action.task.keystone_user['username']
 
-    def _mailman(self, command):
-        key = paramiko.RSAKey.from_private_key_file(
-            self.config.private_key)
-        client = paramiko.client.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(hostname=self.config.host,
-                       port=self.config.port,
-                       username=self.config.user,
-                       pkey=key)
-
-        stdin, stdout, stderr = client.exec_command(command)
-
-        errors = stderr.read()
-        if errors:
-            self.add_note('Error executing mailman command, check logs.')
-            raise ConnectionError(errors)
-
-        # Note(knikolla): Not entirely sure if closing before reading is fine.
-        r = stdout.read().decode('utf-8').split('\n')
-        client.close()
-        return r
-
-    def _is_already_subscribed(self):
-        command = ('/usr/lib/mailman/bin/list_members %s'
-                   % self.config.list)
-        members = self._mailman(command)
-        return self._get_email() in members
-
-    def _subscribe(self):
-        command = (
-                'echo %s | /usr/lib/mailman/bin/add_members -r - %s'
-                % (self._get_email(), self.config.list)
-        )
-        self._mailman(command)
-
     def _approve(self):
         try:
             with Mailman(self.config.host, self.config.port,
