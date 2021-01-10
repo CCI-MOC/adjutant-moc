@@ -1,4 +1,4 @@
-git+https://github.com/CCI-MOC/adjutant@fix-migrations#egg=python-adjutant
+git+https://opendev.org/openstack/adjutant@eda6558b89608dc25a217cbb5625f63755989818#egg=python-adjutant
 confspirator>=0.1.6<0.2
 paramiko>=2,<3
 pbr>=5,<6
