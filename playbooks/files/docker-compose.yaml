@@ -3,7 +3,7 @@ version: "3"
 services:
   adjutant-moc:
     container_name: adjutant-moc
-    image: massopencloud/adjutant-moc:0.2
+    image: massopencloud/adjutant-moc:0.4.0
     environment:
       # DB_HOST is only used by the script waiting for mysql and not adjutant
       # itself. Adjutant database configuration is loaded from adjutant.yaml
@@ -13,6 +13,7 @@ services:
     volumes:
       - "./conf:/etc/adjutant:Z"
       - "./ssh:/.ssh:Z"
+    restart: unless-stopped
 
 {% if production == "False" %}
   smtp:
